@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import "./membership.css";
 
 const Membership = () => {
+  const [membership, setMembership] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,195 +23,184 @@ const Membership = () => {
     address: "Saveetha Engineering College, Chennai",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  // =========================
+  // FETCH MEMBERSHIP STATUS
+  // =========================
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/user/membership`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setMembership(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  // =========================
+  // CHECK ACTIVE MEMBERSHIP
+  // =========================
+  const isActiveMember = () => {
+    if (!membership || !membership.validTill) return false;
+    return new Date(membership.validTill) >= new Date();
   };
 
+  // =========================
+  // SUBMIT FORM
+  // =========================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
 
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/membership/apply`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Membership submission failed");
+    const res = await fetch(
+      `${process.env.REACT_APP_API_URL}/api/membership/apply`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
       }
+    );
 
-      alert("Membership submitted successfully!");
-
-      // OPTIONAL: redirect to profile page
-      // navigate("/profile");
-
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+    if (!res.ok) {
+      alert("Membership submission failed");
+      return;
     }
+
+    alert("Membership submitted successfully!");
   };
 
   return (
     <>
       <Navbar />
 
-      <section className="membership">
-        <h2>Get Your Membership</h2>
-        <div className="underline"></div>
-        <h4 className="membership-sub">
-          Join the Yuva Club and become part of Saveetha Engineering College's
-          most vibrant student community
-        </h4>
+      <div className="membership-page">
+        <div className="membership-wrapper">
 
-        <div className="membership-grid">
-      
-
-          {/* RIGHT FORM */}
-          <div className="form-card">
-            <h3>Application Form</h3>
-
-            <form className="membership-form" onSubmit={handleSubmit}>
-              <label>Full Name *</label>
-              <input
-                type="text"
-                name="name"
-                required
-                onChange={handleChange}
-              />
-
-              <label>Email *</label>
-              <input
-                type="email"
-                name="email"
-                required
-                onChange={handleChange}
-              />
-
-              <label>Phone Number *</label>
-              <input
-                type="text"
-                name="phone"
-                required
-                onChange={handleChange}
-              />
-
-              <label>Register Number *</label>
-              <input
-                type="text"
-                name="rollNo"
-                required
-                onChange={handleChange}
-              />
-
-              <label>Date of Birth *</label>
-              <input
-                type="date"
-                name="dob"
-                required
-                onChange={handleChange}
-              />
-
-              <label>Gender *</label>
-              <select
-                name="gender"
-                required
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-
-              <label>Hosteller / Day Scholar *</label>
-              <select
-                name="scholarType"
-                required
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option>Hosteller</option>
-                <option>Day Scholar</option>
-              </select>
-
-              <label>Department *</label>
-              <select
-                name="department"
-                required
-                onChange={handleChange}
-              >
-                <option value="">Select Department</option>
-                <option>Computer Science and Engineering</option>
-                <option>Information Technology</option>
-                <option>Electronics and Communication Engineering</option>
-                <option>Mechanical Engineering</option>
-                <option>Electrical and Electronics Engineering</option>
-                <option>Artificial Intelligence and Machine Learning</option>
-                <option>Artificial Intelligence and Data Science</option>
-                <option>Biomedical Engineering</option>
-                <option>Chemical Engineering</option>
-                <option>Civil Engineering</option>
-                <option>Computer Science and Engineering (Cyber Security)</option>
-                <option>Management Studies</option>
-                <option>Agricultural Engineering</option>
-              </select>
-
-              <label>Year *</label>
-              <select
-                name="year"
-                required
-                onChange={handleChange}
-              >
-                <option value="">Select Year</option>
-                <option>First Year</option>
-                <option>Second Year</option>
-                <option>Third Year</option>
-                <option>Final Year</option>
-              </select>
-
-              <label>Have you previously held a YUVA membership? *</label>
-              <select
-                name="previousMember"
-                required
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-
-              <label>What do you know about YUVA? *</label>
-              <textarea
-                name="aboutYuva"
-                required
-                onChange={handleChange}
-              ></textarea>
-
-              <label>
-                What value or benefits do you expect from this membership? *
-              </label>
-              <textarea
-                name="expectedBenefits"
-                required
-                onChange={handleChange}
-              ></textarea>
-
-              <button type="submit" className="submit-btn">
-                Submit Application
-              </button>
-            </form>
+          {/* HEADER */}
+          <div className="membership-header">
+            <h1>YUVA Membership Application</h1>
+            <p>
+              Join Saveetha Engineering College’s student community focused on
+              leadership, innovation, and social impact.
+            </p>
           </div>
+
+          {/* FORM CARD */}
+          <div className="membership-card">
+            {loading ? (
+              <p>Checking membership status...</p>
+            ) : isActiveMember() ? (
+              <div className="already-member">
+                <h2>You are already an active YUVA member 🎉</h2>
+                <p>
+                  Your membership is valid till{" "}
+                  <strong>
+                    {new Date(membership.validTill).toLocaleDateString()}
+                  </strong>
+                </p>
+                <p>
+                  You don’t need to apply again. View details in your profile.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+
+                {/* SECTION 1 */}
+                <h3>Personal Details</h3>
+                <div className="form-grid">
+                  <input name="name" placeholder="Full Name *" required onChange={handleChange} />
+                  <input name="email" type="email" placeholder="Email *" required onChange={handleChange} />
+                  <input name="phone" placeholder="Phone Number *" required onChange={handleChange} />
+                  <input name="rollNo" placeholder="Register Number *" required onChange={handleChange} />
+                  <input name="dob" type="date" required onChange={handleChange} />
+                  <select name="gender" required onChange={handleChange}>
+                    <option value="">Gender *</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                {/* SECTION 2 */}
+                <h3>Academic Details</h3>
+                <div className="form-grid">
+                  <select name="scholarType" required onChange={handleChange}>
+                    <option value="">Hosteller / Day Scholar *</option>
+                    <option>Hosteller</option>
+                    <option>Day Scholar</option>
+                  </select>
+
+                  <select name="department" required onChange={handleChange}>
+                    <option value="">Department *</option>
+                    <option>Computer Science and Engineering</option>
+                    <option>Information Technology</option>
+                    <option>Electronics and Communication Engineering</option>
+                    <option>Mechanical Engineering</option>
+                    <option>Electrical and Electronics Engineering</option>
+                    <option>Artificial Intelligence and Machine Learning</option>
+                    <option>Artificial Intelligence and Data Science</option>
+                    <option>Biomedical Engineering</option>
+                    <option>Chemical Engineering</option>
+                    <option>Civil Engineering</option>
+                    <option>Management Studies</option>
+                    <option>Agricultural Engineering</option>
+                  </select>
+
+                  <select name="year" required onChange={handleChange}>
+                    <option value="">Year *</option>
+                    <option>First Year</option>
+                    <option>Second Year</option>
+                    <option>Third Year</option>
+                    <option>Final Year</option>
+                  </select>
+                </div>
+
+                {/* SECTION 3 */}
+                <h3>About You & YUVA</h3>
+                <div className="form-grid single">
+                  <select name="previousMember" required onChange={handleChange}>
+                    <option value="">Previous YUVA Member? *</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                  </select>
+
+                  <textarea
+                    name="aboutYuva"
+                    placeholder="What do you know about YUVA? *"
+                    required
+                    onChange={handleChange}
+                  />
+
+                  <textarea
+                    name="expectedBenefits"
+                    placeholder="What do you expect from this membership? *"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <button type="submit" className="submit-btn">
+                  Submit Membership Application
+                </button>
+              </form>
+            )}
+          </div>
+
         </div>
-      </section>
+      </div>
 
       <Footer />
     </>

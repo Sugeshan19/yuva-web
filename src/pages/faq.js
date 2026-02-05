@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import "./faq.css";
 
 const faqs = [
   {
     question: "What is YUVANXT?",
     answer:
-      "YUVANXT is the name of our club’s membership drive. Derived from “Yuva,” meaning youth, and “NXT,” symbolizing the next generation and forward movement, it reflects our commitment to empowering young minds and shaping the future. YUVANXT represents a dynamic platform where individuals connect, collaborate, and grow together with a shared vision.",
+      "YUVANXT is the name of our club’s membership drive. Derived from “Yuva,” meaning youth, and “NXT,” symbolizing the next generation and forward movement, it reflects our commitment to empowering young minds and shaping the future.",
   },
   {
     question: "What kinds of initiatives does YUVA do?",
@@ -19,78 +20,82 @@ const faqs = [
       "The YUVA membership remains valid until 15 October 2026, covering the full duration of the current academic year.",
   },
   {
-    question:
-      "Can I give suggestions or ideas to the club even if I'm not a core member?",
+    question: "Can I give suggestions even if I'm not a core member?",
     answer:
-      "Yes. All members are welcome to share suggestions and ideas, take part in events, and actively contribute to the club’s activities, even if they are not part of the core team.",
+      "Yes. All members are welcome to share ideas, participate in events, and actively contribute to the club’s activities.",
   },
   {
-    question:
-      "How will the club communicate updates and announcements to me?",
+    question: "How will updates and announcements be shared?",
     answer:
-      "You will be added to the official club group, where all important updates, announcements, and event-related information are shared regularly.",
+      "Members are added to the official club group where all updates, announcements, and event details are shared regularly.",
   },
   {
-    question:
-      "Will YUVA organize external events beyond campus activities?",
+    question: "Will YUVA organize external events?",
     answer:
-      "Yes. Apart from campus-based programs, YUVA will organize and participate in external events, offering members broader exposure and opportunities beyond the institution.",
+      "Yes. YUVA organizes and participates in external events, providing members with broader exposure beyond campus activities.",
   },
   {
     question: "What is a Networking Session?",
     answer:
-      "A networking session is an interactive event where members engage with peers, professionals, and mentors to exchange ideas, build meaningful connections, and explore opportunities for collaboration, learning, and career growth.",
+      "A networking session is an interactive event where members engage with peers and professionals to exchange ideas and build meaningful connections.",
   },
   {
-    question:
-      "Will YUVA Club conduct monthly idea exchange and networking sessions?",
+    question: "Does YUVA conduct monthly idea exchange sessions?",
     answer:
-      "Yes. YUVA Club conducts monthly idea exchange and networking sessions, enabling members to share ideas, discuss innovations, build connections, and collaborate with like-minded individuals.",
+      "Yes. Monthly idea exchange and networking sessions are conducted to encourage collaboration and innovation.",
   },
 ];
 
 const FAQs = () => {
   const [activeIndex, setActiveIndex] = useState(null);
 
-  const toggleFAQ = (index) => {
+  const toggleFAQ = (index) =>
     setActiveIndex(activeIndex === index ? null : index);
-  };
 
   return (
     <>
-      {/* NAVBAR */}
       <Navbar />
 
-      {/* FAQ CONTENT */}
       <div className="faq-page">
-        <div className="faq-container">
-          <h1 className="faq-title">Frequently Asked Questions</h1>
+        <div className="faq-wrapper">
 
-          {faqs.map((faq, index) => (
-            <div key={index} className="faq-item">
-              <button
-                className={`faq-question ${
-                  activeIndex === index ? "active" : ""
-                }`}
-                onClick={() => toggleFAQ(index)}
-              >
-                {faq.question}
-                <span className="faq-icon">
-                  {activeIndex === index ? "−" : "+"}
-                </span>
-              </button>
+          {/* HERO */}
+          <div className="faq-hero">
+            <h1>Frequently Asked Questions</h1>
+            <p>
+              Find answers to common questions about YUVA, membership, and our
+              initiatives.
+            </p>
+          </div>
 
-              {activeIndex === index && (
-                <div className="faq-answer">
-                  <p>{faq.answer}</p>
-                </div>
-              )}
-            </div>
-          ))}
+          {/* FAQ LIST */}
+          <div className="faq-card">
+            {faqs.map((faq, index) => (
+              <div key={index} className="faq-item">
+                <button
+                  className={`faq-question ${
+                    activeIndex === index ? "active" : ""
+                  }`}
+                  onClick={() => toggleFAQ(index)}
+                >
+                  {faq.question}
+                  <span className="icon">
+                    {activeIndex === index ? "−" : "+"}
+                  </span>
+                </button>
+
+                {activeIndex === index && (
+                  <div className="faq-answer">
+                    <p>{faq.answer}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
 
-      {/* FOOTER */}
       <Footer />
     </>
   );

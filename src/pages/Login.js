@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import "./login.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,9 +10,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // =========================
-  // EMAIL + PASSWORD LOGIN
-  // =========================
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -26,125 +24,86 @@ const Login = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        // ✅ SHOW REAL BACKEND MESSAGE
         alert(data.message || "Login failed");
         return;
       }
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
-
       navigate(data.role === "admin" ? "/admin/dashboard" : "/home");
-    } catch (err) {
-      console.error("LOGIN ERROR:", err);
+    } catch {
       alert("Unable to connect to server");
     } finally {
       setLoading(false);
     }
   };
 
-  // =========================
-  // GOOGLE LOGIN SUCCESS
-  // =========================
   const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      if (!credentialResponse?.credential) {
-        alert("Google token missing");
-        return;
-      }
+    if (!credentialResponse?.credential) return;
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/google`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: credentialResponse.credential,
-        }),
-      });
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: credentialResponse.credential }),
+    });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Google login failed");
-        return;
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role);
-
-      navigate("/home");
-    } catch (err) {
-      console.error("GOOGLE LOGIN ERROR:", err);
-      alert("Google authentication error");
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.message || "Google login failed");
+      return;
     }
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+    navigate("/home");
   };
 
   return (
     <div className="login-page">
-      <div className="login-wrapper">
+      <div className="login-card">
 
-        {/* LOGO */}
-        <div className="login-logo">
-          <img
-            src="/images/logo.png"
-            alt="Yuva Club Logo"
-            className="login-logo-image"
+        <div className="login-header">
+          <img src="/images/logo.png" alt="YUVA" />
+          <h2>Welcome back</h2>
+          <p>Sign in to continue to YUVA</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="login-form">
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
-          <h3>Yuva Club</h3>
-          <p>Saveetha Engineering College</p>
-          <div className="underline"></div>
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+
+        <div className="login-divider">OR</div>
+
+        <div className="google-login">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => alert("Google Login Failed")}
+          />
         </div>
 
-        {/* LOGIN CARD */}
-        <div className="login-card">
-          <h4>Welcome Back</h4>
+        <p className="login-footer">
+          Don’t have an account?{" "}
+          <span onClick={() => navigate("/signup")}>Create one</span>
+        </p>
 
-          {/* EMAIL LOGIN */}
-          <form className="login-form" onSubmit={handleLogin}>
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
-            <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-
-          {/* DIVIDER */}
-          <div className="divider">
-            <span>OR</span>
-          </div>
-
-          {/* GOOGLE LOGIN */}
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => alert("Google Login Failed")}
-            />
-          </div>
-
-          {/* SIGNUP */}
-          <p className="signup-text">
-            Don&apos;t have an account?{" "}
-            <span
-              onClick={() => navigate("/signup")}
-              style={{ cursor: "pointer", fontWeight: 600 }}
-            >
-              Sign up
-            </span>
-          </p>
-        </div>
       </div>
     </div>
   );

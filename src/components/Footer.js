@@ -1,40 +1,39 @@
 import { Link } from "react-router-dom";
+import "./footer.css";
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
 
-        {/* ABOUT */}
-        <div className="footer-section">
-          <h4>YUVA Club</h4>
+        {/* BRAND */}
+        <div className="footer-brand">
+          <h3>YUVA Club</h3>
           <p>
-            YUVA at Saveetha Engineering College is a dynamic student-led chapter that bridges industry,
-            academia, and society. It provides students with opportunities to learn beyond classrooms and 
-            participate in real-world problem solving aligned with national priorities.
+            YUVA at Saveetha Engineering College is a student-led chapter bridging
+            industry, academia, and society through leadership, innovation, and
+            social impact.
           </p>
         </div>
 
-        {/* QUICK LINKS */}
-        <div className="footer-section">
+        {/* LINKS */}
+        <div className="footer-links">
           <h4>Quick Links</h4>
-          <ul>
-            <li><Link to="/home">Home</Link></li>
-            <li><Link to="/membership">Membership</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/profile">Profile</Link></li>
+          <Link to="/home">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/membership">Membership</Link>
+          <Link to="/profile">Profile</Link>
 
-            {/* FAQ LINK — ONLY HERE */}
-            <li><Link to="/faq">FAQ</Link></li>
-          </ul>
+          {/* FAQ — footer only */}
+          <Link to="/faq">FAQ</Link>
         </div>
 
         {/* CONTACT */}
-        <div className="footer-section">
+        <div className="footer-links">
           <h4>Contact</h4>
           <p>Saveetha Engineering College</p>
           <p>Chennai, Tamil Nadu</p>
-          <p>Email: yiyuvasec@gmail.com</p>
+          <p>yiyuvasec@gmail.com</p>
           <a
             href="https://www.instagram.com/yuvaclub_sec?igsh=MnY1emJwOTJpcXM3"
             target="_blank"
@@ -44,27 +43,26 @@ const Footer = () => {
           </a>
         </div>
 
-        {/* BRANDING */}
-        <div className="footer-section">
-          <h4>Branding Team</h4>
+        {/* CREDITS */}
+        <div className="footer-links">
+          <h4>Branding & Tech</h4>
           <a
-            href="https://sugeshan19.github.io/portfolio/"
+            href="https://my-portfolio-tau-orpin-59.vercel.app/"
             target="_blank"
             rel="noreferrer"
           >
-          Sugeshan S - Full Stack Developer (MERN)
+            Sugeshan S – Full Stack (MERN)
           </a>
-          <p>Arshiya M - Frontend Developer</p>
-          <p>Nithyasree S - Frontend Developer</p>
-          <p>Keshavardhini B - UI/UX Developer</p>
-          <p>Esakindar - UI/UX Developer</p>
+          <p>Arshiya M – Frontend</p>
+          <p>Nithyasree S – Frontend</p>
+          <p>Keshavardhini B – UI/UX</p>
+          <p>Esakindar – UI/UX</p>
         </div>
 
       </div>
 
-      {/* BOTTOM BAR */}
       <div className="footer-bottom">
-        © {new Date().getFullYear()} YUVA Club – Saveetha Engineering College
+        © {new Date().getFullYear()} YUVA Club · Saveetha Engineering College
       </div>
     </footer>
   );
